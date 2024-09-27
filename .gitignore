@@ -1,0 +1,39 @@
+# Binaries for programs and plugins
+.env
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Output of the go coverage tool
+coverage.out
+
+# Vendor directory (depends on the project setup, typically not needed if using modules)
+vendor/
+
+# Go test binary
+*.test
+
+# IDE specific
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+
+# Dependency directories (auto-generated)
+node_modules/
+.DS_Store
+
+# Go workspace and module cache
+go.work
+go.work.sum
+
+# Generated files
+*.out
+*.cgo
+
+# Other temporary files
+*.tmp
+*.temp
