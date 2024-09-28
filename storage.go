@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"time"
 )
 
 type Storage interface {
@@ -18,22 +19,34 @@ type PostGresStore struct {
 }
 
 func NewPostGresStore() (*PostGresStore, error) {
-	// postgres_password := getEnv("POSTGRES_PASSWORD")
-	connStr := "user=postgres dbname=postgres password=Isham@123 sslmode=disable"
-	// connStr := fmt.Sprintf("user=postgres dbname=Main-postgres password=%s sslmode=disable", postgres_password)
-	db, err := sql.Open("postgres", connStr)
+	connStr := "host=db user=portfolio dbname=portfolio password=portfolio sslmode=disable"
+
+	var db *sql.DB
+	var err error
+
+	// Retry loop to attempt connection multiple times
+	for i := 0; i < 5; i++ { // Adjust the retry count as needed
+		db, err = sql.Open("postgres", connStr)
+		if err == nil {
+			// Ping the database to check the connection
+			err = db.Ping()
+			if err == nil {
+				fmt.Println("Connected to the database successfully!")
+				break
+			}
+		}
+
+		fmt.Printf("Failed to connect to the database: %v. Retrying in 2 seconds...\n", err)
+		time.Sleep(2 * time.Second) // Wait before retrying
+	}
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not connect to the database after multiple attempts: %v", err)
 	}
-	if err := db.Ping(); err != nil {
-		fmt.Println("here")
-		return nil, err
-	}
+
 	return &PostGresStore{
 		db: db,
 	}, nil
-
 }
 
 func (s *PostGresStore) createWork(work *Work) error {

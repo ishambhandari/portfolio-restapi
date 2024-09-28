@@ -10,7 +10,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	server := NewAPIServer(":3000", store)
+	server := NewAPIServer(":8080", store)
 	server.Run()
 	fmt.Println("Server running!!")
 }
