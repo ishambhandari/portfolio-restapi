@@ -19,8 +19,15 @@ type PostGresStore struct {
 }
 
 func NewPostGresStore() (*PostGresStore, error) {
-	connStr := "host=db user=portfolio dbname=portfolio password=portfolio sslmode=disable"
-
+	fmt.Println("DB_HOST:", getEnv("DB_HOST"))
+	fmt.Println("DB_USER:", getEnv("DB_USER"))
+	fmt.Println("DB_NAME:", getEnv("DB_NAME"))
+	fmt.Println("DB_PASSWORD:", getEnv("DB_PASSWORD"))
+	connStr := fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=require",
+		getEnv("DB_HOST"),
+		getEnv("DB_USER"),
+		getEnv("DB_NAME"),
+		getEnv("DB_PASSWORD"))
 	var db *sql.DB
 	var err error
 
@@ -28,7 +35,6 @@ func NewPostGresStore() (*PostGresStore, error) {
 	for i := 0; i < 5; i++ { // Adjust the retry count as needed
 		db, err = sql.Open("postgres", connStr)
 		if err == nil {
-			// Ping the database to check the connection
 			err = db.Ping()
 			if err == nil {
 				fmt.Println("Connected to the database successfully!")
