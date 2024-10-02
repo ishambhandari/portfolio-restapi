@@ -8,11 +8,16 @@ import (
 	"os"
 )
 
-func getEnv(key string) string {
-	err := godotenv.Load(".env")
+const environment = "PROD"
 
-	if err != nil {
-		log.Fatalf("Error loading .env file")
+func getEnv(key string) string {
+	if environment == "DEV" {
+		err := godotenv.Load(".env")
+
+		if err != nil {
+			log.Fatalf("Error loading .env file")
+		}
+		return os.Getenv(key)
 	}
 
 	return os.Getenv(key)
