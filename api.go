@@ -31,7 +31,7 @@ func (s *APIServer) Run() {
 	log.Println("JSON API server running on %S port", s.listenAddr)
 	router := mux.NewRouter()
 	router.HandleFunc("/works", makeHTTPHandleFunc(s.handleWork))
-	router.HandleFunc("/works/{id}", makeHTTPHandleFunc(s.handleDeleteWork))
+	router.HandleFunc("/works/{id}", makeHTTPHandleFunc(s.handleWorkById))
 	http.ListenAndServe(s.listenAddr, router)
 }
 
@@ -67,7 +67,8 @@ func (s *APIServer) handleCreateWork(w http.ResponseWriter, r *http.Request) err
 	return WriteJson(w, http.StatusOK, work)
 }
 
-func (s *APIServer) handleDeleteWork(w http.ResponseWriter, r *http.Request) error {
+func (s *APIServer) handleWorkById(w http.ResponseWriter, r *http.Request) error {
+	enableCors(&w)
 	vars := mux.Vars(r)
 	idStr, ok := vars["id"]
 	if !ok {
