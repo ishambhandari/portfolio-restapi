@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-const environment = "PROD"
+const environment = "DEV"
 
 func getEnv(key string) string {
 	if environment == "DEV" {

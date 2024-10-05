@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"net/smtp"
 	"strconv"
 )
 
@@ -32,6 +33,7 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.HandleFunc("/works", makeHTTPHandleFunc(s.handleWork))
 	router.HandleFunc("/works/{id}", makeHTTPHandleFunc(s.handleWorkById))
+	router.HandleFunc("/mail", makeHTTPHandleFunc(s.handleEmail))
 	http.ListenAndServe(s.listenAddr, router)
 }
 
@@ -94,4 +96,48 @@ func (s *APIServer) handleWorkById(w http.ResponseWriter, r *http.Request) error
 	}
 	return WriteJson(w, http.StatusOK, "Done")
 
+}
+
+func (s *APIServer) handleEmail(w http.ResponseWriter, r *http.Request) error {
+	enableCors(&w)
+	if r.Method == "GET" {
+		http.Error(w, "Get request not supported", http.StatusBadRequest)
+	}
+	if r.Method == "POST" {
+		return s.handlePostEmail(w, r)
+	}
+
+	return fmt.Errorf("Method not allowed %s", r.Method)
+}
+
+func (s *APIServer) handlePostEmail(w http.ResponseWriter, r *http.Request) error {
+	enableCors(&w)
+	createEmail := &PostContactDetails{}
+	if err := json.NewDecoder(r.Body).Decode(createEmail); err != nil {
+		return err
+	}
+	if err := sendMail(getEnv("EMAIL_SENDER"), getEnv("EMAIL_RECEIVER"), createEmail.Name, createEmail.Description); err != nil {
+		return err
+	}
+	fmt.Println("herer!!!!")
+	return WriteJson(w, http.StatusOK, "Done")
+}
+
+func sendMail(sender string, receiver string, receiver_name string, body string) error {
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+
+	// The email message headers and body.
+	message := []byte("Subject: " + "Personal Website Message by: " + receiver_name + "\r\n" +
+		"\r\n" + body)
+
+	// Authentication for the email sender.
+	auth := smtp.PlainAuth("", sender, getEnv("EMAIL_PASSWORD"), smtpHost)
+
+	// Send the email.
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, sender, []string{receiver}, message)
+	if err != nil {
+		return fmt.Errorf("failed to send email: %v", err)
+	}
+	return nil
 }

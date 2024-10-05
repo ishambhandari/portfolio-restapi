@@ -9,6 +9,12 @@ type Work struct {
 	Live_link   string `json:"live_link"`
 }
 
+type PostContactDetails struct {
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Description string `json:"description"`
+}
+
 func NewWork(title string, description string, imageurl string, code_link string, live_link string) *Work {
 	return &Work{
 		Title:       title,
@@ -17,4 +23,5 @@ func NewWork(title string, description string, imageurl string, code_link string
 		Code_link:   code_link,
 		Live_link:   live_link,
 	}
+
 }
