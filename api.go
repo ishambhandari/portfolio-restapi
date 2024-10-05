@@ -21,6 +21,12 @@ func NewAPIServer(listenAddr string, store Storage) *APIServer {
 	}
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
+	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
+
 func (s *APIServer) Run() {
 	log.Println("JSON API server running on %S port", s.listenAddr)
 	router := mux.NewRouter()
@@ -30,6 +36,7 @@ func (s *APIServer) Run() {
 }
 
 func (s *APIServer) handleWork(w http.ResponseWriter, r *http.Request) error {
+	enableCors(&w)
 	fmt.Println("asdf", r.Method)
 	if r.Method == "GET" {
 		return s.handleGetWork(w, r)
