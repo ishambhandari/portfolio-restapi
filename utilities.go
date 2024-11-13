@@ -19,7 +19,6 @@ func getEnv(key string) string {
 		}
 		return os.Getenv(key)
 	}
-
 	return os.Getenv(key)
 }
 
@@ -36,19 +35,19 @@ type ApiError struct {
 type apiFunc func(w http.ResponseWriter, r *http.Request) error
 
 func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        // Enable CORS for each request
-        enableCors(&w)
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Enable CORS for each request
+		enableCors(&w)
 
-        // Handle preflight requests
-        if r.Method == http.MethodOptions {
-            w.WriteHeader(http.StatusNoContent) // Respond with 204 No Content for preflight
-            return
-        }
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent) // Respond with 204 No Content for preflight
+			return
+		}
 
-        // Call the wrapped apiFunc
-        if err := f(w, r); err != nil {
-            WriteJson(w, http.StatusBadRequest, ApiError{Error: err.Error()})
-        }
-    }
+		// Call the wrapped apiFunc
+		if err := f(w, r); err != nil {
+			WriteJson(w, http.StatusBadRequest, ApiError{Error: err.Error()})
+		}
+	}
 }

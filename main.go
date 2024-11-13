@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	store, err := NewPostGresStore()
+	store, err := NewFirebaseStore()
 	if err != nil {
 		log.Fatal(err)
 	}

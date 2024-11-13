@@ -40,7 +40,6 @@ func (s *APIServer) Run() {
 
 func (s *APIServer) handleWork(w http.ResponseWriter, r *http.Request) error {
 	enableCors(&w)
-	fmt.Println("asdf", r.Method)
 	if r.Method == "GET" {
 		return s.handleGetWork(w, r)
 	}
@@ -63,7 +62,7 @@ func (s *APIServer) handleCreateWork(w http.ResponseWriter, r *http.Request) err
 	if err := json.NewDecoder(r.Body).Decode(createWorkRequest); err != nil {
 		return err
 	}
-	work := NewWork(createWorkRequest.Title, createWorkRequest.Description, createWorkRequest.ImageUrl, createWorkRequest.Code_link, createWorkRequest.Live_link)
+	work := &Work{"", createWorkRequest.Title, createWorkRequest.Description, createWorkRequest.ImageUrl, createWorkRequest.Code_link, createWorkRequest.Live_link}
 	if err := s.store.createWork(work); err != nil {
 		return err
 	}
@@ -134,6 +133,7 @@ func sendMail(sender string, receiver string, receiver_name string, body string)
 
 	// Authentication for the email sender.
 	auth := smtp.PlainAuth("", sender, getEnv("EMAIL_PASSWORD"), smtpHost)
+	fmt.Println("emailpassword", getEnv("EMAIL_PASSWORD"))
 
 	// Send the email.
 	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, sender, []string{receiver}, message)

@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   app:
     build: .
@@ -8,36 +6,23 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      - DB_HOST=db
-      - DB_USER=portfolio
-      - DB_PASSWORD=portfolio
-      - DB_NAME=portfolio
     networks:
-      - app-network
-#
-#   db:
-#     image: postgres:14
-#     ports:
-#       - "5432:5432"
-#     environment:
-#       POSTGRES_USER: portfolio
-#       POSTGRES_PASSWORD: portfolio
-#       POSTGRES_DB: portfolio
-#     volumes:
-#       - db_data:/var/lib/postgresql/data
-#       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-#     healthcheck:
-#       test: ["CMD-SHELL", "pg_isready -U portfolio"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#     networks:
-#       - app-network
-#
-# volumes:
-#   db_data:
-#
-# networks:
-#   app-network:
-#     driver: bridge
+      - app-network # Define the network used by app service
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: portfolio
+      POSTGRES_DB: portfolio
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "portfolio"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+    networks:
+      - app-network # Define the network used by db service
+
+networks:
+  app-network:
+    driver: bridge # You can also choose a different driver, like "host" or "overlay"

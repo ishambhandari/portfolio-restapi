@@ -1,7 +1,7 @@
 package main
 
 type Work struct {
-	ID          int    `json:"id"`
+	ID          string `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	ImageUrl    string `json:"imageUrl"`
@@ -15,13 +15,13 @@ type PostContactDetails struct {
 	Description string `json:"description"`
 }
 
-func NewWork(title string, description string, imageurl string, code_link string, live_link string) *Work {
-	return &Work{
-		Title:       title,
-		Description: description,
-		ImageUrl:    imageurl,
-		Code_link:   code_link,
-		Live_link:   live_link,
-	}
-
-}
+// func NewWork(title string, description string, imageurl string, code_link string, live_link string) *Work {
+// 	return &Work{
+// 		Title:       title,
+// 		Description: description,
+// 		ImageUrl:    imageurl,
+// 		Code_link:   code_link,
+// 		Live_link:   live_link,
+// 	}
+//
+// }
